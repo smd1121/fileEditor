@@ -12,14 +12,51 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        PrintSupport
         REQUIRED)
 
-add_executable(fileEditor main.cpp)
-target_link_libraries(fileEditor
+qt_standard_project_setup()
+qt_add_executable(fileEditor icons.qrc main.cpp mainwindow.cpp mainwindow.h)
+
+target_link_libraries(fileEditor PRIVATE
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        Qt::PrintSupport
         )
+
+#qt_add_resources(fileEditor imageresources
+#        PREFIX "/"
+#        FILES
+#        icons/file-new.png
+#        icons/file-open.png
+#        icons/file-save.png
+#        icons/file-saveas.png
+#        icons/file-export.png
+#
+#        icons/style-bold.png
+#        icons/style-italic.png
+#        icons/style-underline.png
+#        icons/style-size.png
+#        icons/style-color.png
+#        icons/style-font.png
+#
+#        icons/align-left.png
+#        icons/align-center.png
+#        icons/align-right.png
+#
+#        icons/edit-paste.png
+#        icons/edit-copy.png
+#        icons/edit-cut.png
+#        icons/edit-image.png
+#        icons/edit-undo.png
+#        icons/edit-redo.png
+#
+#        icons/util-find.png
+#        icons/util-replace.png
+#        icons/util-zoomin.png
+#        icons/util-zoomout.png
+#        )
 
 if (WIN32)
     set(DEBUG_SUFFIX)

@@ -1,0 +1,29 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>icons/align-center.png</file>
+        <file>icons/align-left.png</file>
+        <file>icons/align-right.png</file>
+        <file>icons/edit-copy.png</file>
+        <file>icons/edit-cut.png</file>
+        <file>icons/edit-image.png</file>
+        <file>icons/edit-paste.png</file>
+        <file>icons/edit-redo.png</file>
+        <file>icons/edit-undo.png</file>
+        <file>icons/file-export.png</file>
+        <file>icons/file-new.png</file>
+        <file>icons/file-open.png</file>
+        <file>icons/file-save.png</file>
+        <file>icons/file-saveas.png</file>
+        <file>icons/style-bold.png</file>
+        <file>icons/style-color.png</file>
+        <file>icons/style-font.png</file>
+        <file>icons/style-italic.png</file>
+        <file>icons/style-size.png</file>
+        <file>icons/style-underline.png</file>
+        <file>icons/util-find.png</file>
+        <file>icons/util-replace.png</file>
+        <file>icons/util-zoomin.png</file>
+        <file>icons/util-zoomout.png</file>
+    </qresource>
+</RCC>
