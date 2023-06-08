@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QCloseEvent>
 #include <QShortcut>
+#include <QLineEdit>
 
 class MainWindow : public QMainWindow {
 public:
@@ -15,14 +16,32 @@ public:
 
         // 创建文本编辑框
         textEdit = new MyTextEdit(this);
-        setCentralWidget(textEdit);
 
         // 将 textEdit 和 document 关联；此后对一方的更改会在另一方同步
         textEdit->setDocument(document);
         textEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
+        QFont defaultFont;
+        defaultFont.setPointSize(14);
+        document->setDefaultFont(defaultFont);
+
+        auto cursor = textEdit->textCursor();
+        auto format = cursor.charFormat();
+        qDebug() << "光标默认字号：" << format.fontPointSize();
+        if (format.fontPointSize() == 0) {
+            format.setFontPointSize(14);
+            cursor.setCharFormat(format);
+            textEdit->setTextCursor(cursor);
+            qDebug() << "光标字号：" << textEdit->textCursor().charFormat().fontPointSize();
+        }
+
+        setCentralWidget(textEdit);
+
         // 初始化工具栏
         initToolbars();
+
+//        // 为窗口安装事件过滤器
+//        installEventFilter(this);
     }
 
     void closeEvent(QCloseEvent* event) override {
@@ -33,10 +52,23 @@ public:
         }
     }
 
+//    bool eventFilter(QObject *obj, QEvent *event) override {
+//        if (event->type() == QEvent::MouseButtonPress) {
+//            if (fontSizeInput->isVisible()) {
+//                // 如果点击的位置不在输入框内，则关闭输入框
+//                auto *mouseEvent = dynamic_cast<QMouseEvent *>(event);
+//                if (!fontSizeInput->geometry().contains(mouseEvent->pos())) {
+//                    fontSizeInput->hide();
+//                }
+//            }
+//        }
+//        return QMainWindow::eventFilter(obj, event);
+//    }
+
 private:
     // new 一个 QAction 并设置其 Icon, Tip 和 Slot
     template<typename Func>
-    QAction * initQAction(const QString &filename, const QString &tip, Func slot, std::optional<QKeySequence> shortcut) {
+    QAction * initQAction(const QString &filename, const QString &tip, Func slot, std::optional<QKeySequence> shortcut, bool enable = true) {
         auto * btn = new QAction(this);
 
         btn->setIcon(QIcon{filename});
@@ -46,6 +78,8 @@ private:
 
         if (shortcut)
             btn->setShortcut(shortcut.value());
+
+        btn->setEnabled(enable);
 
         connect(btn, &QAction::triggered, this, slot);
         return btn;
@@ -65,7 +99,14 @@ private:
         stylesTb->addAction(initQAction(":/icons/style-bold.png", "加粗 (Ctrl+B)", &MainWindow::styleBold, QKeySequence(Qt::CTRL | Qt::Key_B)));
         stylesTb->addAction(initQAction(":/icons/style-italic.png", "斜体 (Ctrl+I)", &MainWindow::styleItalic, QKeySequence(Qt::CTRL | Qt::Key_I)));
         stylesTb->addAction(initQAction(":/icons/style-underline.png", "下划线 (Ctrl+U)", &MainWindow::styleUnderline, QKeySequence(Qt::CTRL | Qt::Key_U)));
-        stylesTb->addAction(initQAction(":/icons/style-size.png", "字号", &MainWindow::styleSize, {}));
+        stylesTb->addAction(initQAction(":/icons/style-size.png", "字号", &MainWindow::showStyleSize, {}));
+//        fontSizeInput = new QLineEdit(this);
+        fontSizeInput->setFixedWidth(30);
+        stylesTb->addWidget(fontSizeInput);
+        // 监听输入框的回车键事件，以确认用户输入
+        connect(fontSizeInput, &QLineEdit::selectionChanged, this, &MainWindow::showStyleSize);
+        connect(fontSizeInput, &QLineEdit::returnPressed, this, &MainWindow::styleSize);
+//        fontSizeInput->hide();
         stylesTb->addAction(initQAction(":/icons/style-color.png", "颜色", &MainWindow::styleColor, {}));
         stylesTb->addAction(initQAction(":/icons/style-font.png", "字体", &MainWindow::styleFont, {}));
         addToolBar(stylesTb);
@@ -105,6 +146,7 @@ private slots:
     void styleBold();
     void styleItalic();
     void styleUnderline();
+    void showStyleSize();
     void styleSize();
     void styleColor();
     void styleFont();
@@ -165,6 +207,7 @@ private:
     QTextDocument *document = new QTextDocument();
     MyTextEdit *textEdit;
     std::optional<QString> filePath{};
+    QLineEdit* fontSizeInput{new QLineEdit(this)};
 
     bool checkFileSave();   // 询问是否保存当前文件，如果为是或否，返回 true。返回 false 表示取消。
     void updateFilePath(const QString &path);

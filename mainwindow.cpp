@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
+#include <QVBoxLayout>
 
 void MainWindow::fileNew() {
     qDebug() << "新建文件";
@@ -158,8 +159,36 @@ void MainWindow::styleUnderline() {
     textEdit->setTextCursor(cursor); // 更新文本光标
 }
 
-void MainWindow::styleSize() {
+void MainWindow::showStyleSize() {
+    // 获取当前光标所在位置的字号
+    QTextCursor cursor = textEdit->textCursor();
+    qreal currentFontSize = cursor.charFormat().fontPointSize();
 
+    qDebug() << "显示当前字号：" << currentFontSize;
+
+    // 在输入框中显示当前字号
+    fontSizeInput->setText(QString::number(currentFontSize));
+}
+
+void MainWindow::styleSize() {
+    // 获取当前光标所在位置的字号
+    QTextCursor cursor = textEdit->textCursor();
+
+    qDebug() << "设置字号";
+    fontSizeInput->clearFocus(); // 移除输入框的焦点，确认用户输入
+
+    bool ok = false;
+    int newFontSize = fontSizeInput->text().toInt(&ok);
+    if (!ok || newFontSize <= 0) {
+        qDebug() << "字号输入非法，放弃";
+        return;
+    }
+    qDebug() << "设置字号为" << newFontSize;
+
+    QTextCharFormat format = cursor.charFormat();
+    format.setFontPointSize(newFontSize);
+    cursor.setCharFormat(format);
+    textEdit->setTextCursor(cursor);
 }
 
 void MainWindow::styleColor() {
