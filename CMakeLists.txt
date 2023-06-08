@@ -16,7 +16,7 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 qt_standard_project_setup()
-qt_add_executable(fileEditor icons.qrc main.cpp mainwindow.cpp mainwindow.h)
+qt_add_executable(fileEditor icons.qrc main.cpp mainwindow.cpp mainwindow.h FindReplaceDialog.h)
 
 target_link_libraries(fileEditor PRIVATE
         Qt::Core
