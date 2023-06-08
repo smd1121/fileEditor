@@ -25,5 +25,6 @@
         <file>icons/util-replace.png</file>
         <file>icons/util-zoomin.png</file>
         <file>icons/util-zoomout.png</file>
+        <file>icons/logo.png</file>
     </qresource>
 </RCC>

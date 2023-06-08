@@ -88,8 +88,8 @@ private:
         auto * utilsTb = new QToolBar(this);
         utilsTb->addAction(initQAction(":/icons/util-find.png", "查找 (Ctrl+F)", &MainWindow::utilFind, QKeySequence(Qt::CTRL | Qt::Key_F)));
         utilsTb->addAction(initQAction(":/icons/util-replace.png", "替换 (Ctrl+R)", &MainWindow::utilReplace, QKeySequence(Qt::CTRL | Qt::Key_R)));
-        utilsTb->addAction(initQAction(":/icons/util-zoomin.png", "放大", &MainWindow::utilZoomIn, QKeySequence(Qt::CTRL | Qt::Key_Plus)));
-        utilsTb->addAction(initQAction(":/icons/util-zoomout.png", "缩小", &MainWindow::utilZoomOut, QKeySequence(Qt::CTRL | Qt::Key_Minus)));
+//        utilsTb->addAction(initQAction(":/icons/util-zoomin.png", "放大", &MainWindow::utilZoomIn, QKeySequence(Qt::CTRL | Qt::Key_Plus)));
+//        utilsTb->addAction(initQAction(":/icons/util-zoomout.png", "缩小", &MainWindow::utilZoomOut, QKeySequence(Qt::CTRL | Qt::Key_Minus)));
         addToolBar(utilsTb);
 
         qDebug() << "初始化工具栏：initToolbars 完成";
@@ -122,8 +122,8 @@ private slots:
 
     void utilFind();
     void utilReplace();
-    void utilZoomIn() { textEdit->zoomIn(); }
-    void utilZoomOut() { textEdit->zoomOut(); }
+    void utilZoomIn() { zoom(0.1); }
+    void utilZoomOut() { zoom(-0.1); }
 
     void insertText1() {
         QTextCursor cursor(document);
@@ -169,4 +169,5 @@ private:
     bool checkFileSave();   // 询问是否保存当前文件，如果为是或否，返回 true。返回 false 表示取消。
     void updateFilePath(const QString &path);
     void setAlignment(Qt::AlignmentFlag alignment);
+    void zoom(qreal delta);
 };

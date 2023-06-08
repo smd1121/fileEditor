@@ -39,7 +39,9 @@ void MainWindow::fileOpen() {
             QString content = in.readAll();
 
             document->setHtml(content);
+            document->setModified(false);
             filePath = path;
+            updateFilePath(path);
 
             qDebug() << QString{"文件 %1 打开成功"}.arg(path);
         } else {
@@ -88,22 +90,36 @@ void MainWindow::fileSaveAs() {
 
 void MainWindow::fileExport() {
     qDebug() << "导出为 PDF";
-//    QPrinter printer(QPrinter::PrinterResolution);
-//    printer.setOutputFormat(QPrinter::PdfFormat);
-//    printer.setOutputFileName("output.pdf");  // 设置输出文件名
-//
+
+    QString fileName = QFileDialog::getSaveFileName(nullptr, "导出 PDF", QString(), "*.pdf");
+    if (fileName.isEmpty()) {
+        qDebug() << "用户选择路径为空";
+        return;
+    }
+
+    if (QFileInfo(fileName).suffix().isEmpty()) { fileName.append(".pdf"); }
+    qDebug() << "导出到" << fileName;
+
+    QPrinter printer(QPrinter::PrinterResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);  // 设置输出文件名
+
+    document->setPageSize(printer.pageRect(QPrinter::Point).size()); // This is necessary if you want to hide the page number
+    document->print(&printer);
+
+
 //    QPainter painter;
 //    painter.begin(&printer);
 //    document->drawContents(&painter);
 //    painter.end();
 
-    QPdfWriter writer("out.pdf");
-    writer.setPageSize(QPageSize(QPageSize::A4));
-    writer.setResolution(150);
-
-    QPainter painter(&writer);
-    document->drawContents(&painter);
-    painter.end();
+//    QPdfWriter writer("out.pdf");
+//    writer.setPageSize(QPageSize(QPageSize::A4));
+//    writer.setResolution(150);
+//
+//    QPainter painter(&writer);
+//    document->drawContents(&painter);
+//    painter.end();
     qDebug() << "导出完成";
 }
 
@@ -223,4 +239,11 @@ void MainWindow::setAlignment(Qt::AlignmentFlag alignment) {
 
     cursor.setBlockFormat(blockFormat); // 应用段落格式
     textEdit->setTextCursor(cursor); // 更新文本编辑框的光标
+}
+
+void MainWindow::zoom(qreal delta) {
+    static qreal zoomFactor = 1.0;
+    zoomFactor += delta;
+    QString css = QString("body { transform: scale(%1); }").arg(zoomFactor);
+    textEdit->document()->setDefaultStyleSheet(css);
 }
